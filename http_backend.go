@@ -15,6 +15,8 @@
 package colly
 
 import (
+	"bytes"
+	"compress/gzip"
 	"crypto/sha1"
 	"encoding/gob"
 	"encoding/hex"
@@ -27,8 +29,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	"compress/gzip"
 
 	"github.com/gobwas/glob"
 )
