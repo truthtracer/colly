@@ -20,6 +20,8 @@ import (
 	"crypto/sha1"
 	"encoding/gob"
 	"encoding/hex"
+	"github.com/andybalholm/brotli"
+	"github.com/gobwas/glob"
 	"io"
 	"math/rand"
 	"net/http"
@@ -29,8 +31,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	"github.com/gobwas/glob"
 )
 
 type httpBackend struct {
@@ -218,7 +218,6 @@ func (h *httpBackend) Do(request *http.Request, bodySize int, checkHeadersFunc c
 		if decompressor != nil {
 			decompressed, err := io.ReadAll(decompressor)
 			if err != nil {
-				log.Printf("Error decompressing response body from %v: %v", res.Request.URL, err)
 				return nil, err
 			} else {
 				body = decompressed
