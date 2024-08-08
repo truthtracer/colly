@@ -212,6 +212,19 @@ func (h *httpBackend) Do(request *http.Request, bodySize int, checkHeadersFunc c
 	if err != nil {
 		return nil, err
 	}
+	if !res.Uncompressed && (strings.Contains(contentEncoding, "br") || (contentEncoding == "" && strings.Contains(strings.ToLower(res.Header.Get("Content-Type")), "br"))) {
+		br := bytes.NewReader(body)
+		decompressor := brotli.NewReader(br)
+		if decompressor != nil {
+			decompressed, err := io.ReadAll(decompressor)
+			if err != nil {
+				log.Printf("Error decompressing response body from %v: %v", res.Request.URL, err)
+				return nil, err
+			} else {
+				body = decompressed
+			}
+		}
+	}
 	return &Response{
 		StatusCode: res.StatusCode,
 		Body:       body,
